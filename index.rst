@@ -83,8 +83,21 @@ The Portal Aspect user interface provides for catalog queries simply as TAP quer
 
 The graphical query builder provides an interface for selecting one of the available schemas in the service, and from there one of the tables in that schema.
 Once a table is selected, the query builder identifies spatial coordinate columns, if present, and provides for cone and polygon searches against those columns.
+Multi-object spatial searches are not yet implemented, post-DM-10, but the underlying LSST TAP service and databases also do not yet support the TAP ``UPLOAD`` mechanism that would be required to implement them efficiently.
 
-Multi-object searches are not yet implemented, post-DM-10, but the underlying LSST TAP service and databases also do not yet support the TAP ``UPLOAD`` mechanism that would be required to implement them efficiently.
+The UI also provides for temporal-range searches against tables for which it can determine that a time column is present - or for a user-specified time column.
+In the current version, the time column must be expressed in MJD, but times can be entered in human-readable forms as well as in MJD, and the UI will display the appropriate conversion.
+
+The UI is designed to be extensible to provide similar specialized query assistants for other types of values - wavelength in particular was planned - but no additional ones have been implemented at this time.
+
+The UI also displays the schema of the selected table.
+This display includes checkboxes for selecting the columns to be retrieved by the query; they are initialized based on the ``principal`` Boolean attributes of the columns in `TAP_SCHEMA``, if available, to provide a basic "most commonly used" subset.
+The display also allows for direct entry of constraints on both numeric and string columns' values in the query, in a simple syntax like "< 8.5".
+
+As an alternative to the graphical query builder, the user can input ADQL queries directly.
+The ADQL query screen contains a schema browser to assist the user with the input of table and column names; this is driven by the ``TAP_SCHEMA`` data available on the selected TAP service.
+
+When the graphical query builder has been used to construct a query, the UI provides the user the option of executing it directly or of switching to the ADQL-entry screen with the constructed query already displayed.
 
 Image Queries
 ^^^^^^^^^^^^^
@@ -136,6 +149,9 @@ Deployment
 The Portal Aspect is a Web-based client-server application.
 A containerized server process, implemented in Java, runs within the LSP deployment, providing both application services and the source of the HTML and JavaScript code required for the execution of the client side in the user's Web browser.
 
+Kubernetes Deployments
+^^^^^^^^^^^^^^^^^^^^^^
+
 As with the rest of the Science Platform components, the Portal Aspect server-side application is intended to be deployed in Kubernetes.
 To facilitate this, the server side code, as part of its release process, is built into a Docker image that contains both the compiled Java code to execute on the server and the HTML and JavaScript code to be served to the client's browser.
 
@@ -149,6 +165,9 @@ The Portal code expects that, following the LSP convention, the Notebook Aspect 
 The URL conventions involved are defined in Document XXX.
 
 As of early 2020, standing instances are maintained at NCSA at `https://lsst-lsp-stable.ncsa.illinois.edu/portal/app` and `https://lsst-lsp-int.ncsa.illinois.edu/portal/app`, with the latter used preferentially for testing of new releases.
+
+Authentication and Authorization Considerations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The Kubernetes ingress rules for the Portal Aspect endpoints include authorization-based redirects as documented in DMTN-094.
 The ingress is configured to require the user's authorization to include the ``exec-portal`` capability.
@@ -165,7 +184,7 @@ Note that because the ``exec-portal`` capability is not sufficient on its own to
 This is not likely to be a situation that arises in practice.
 
 Standalone Firefly Server
-~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In addition to the Portal Aspect application deployed in the LSP instances in Kubernetes, at this time LSST also maintains a standalone Firefly server, for image visualization purposes, on an NCSA virtual machine at `http://lsst-demo.ncsa.illinois.edu/firefly/`.
 This deployment is "vanilla Firefly" - that is, it does not use code from the ``lsst/suit`` repository and does not have access to the LSST-specific TAP services - and is based on an image from the ``ipac/firefly`` DockerHub repository.

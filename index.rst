@@ -271,10 +271,10 @@ However, that policy can be overriden by individual projects' needs, particularl
 
 The low level of support provided by Rubin/LSST for Firefly post-DM-10 does allows for release of urgent fixes when required; these must be explicitly requested by Rubin/LSST.
 
-Releases follow the naming convention *(four-digit-year.number)*, with point releases of the form *(year.n.m)*\ .
-Release tags on Github have the form ``release-``\ *(year.n[.m])*\ .
+Releases follow the naming convention *(four-digit-year.series-number)*, with point releases of the form *(year.series.patch)*\ .
+Release tags on Github have the form ``release-``\ *(year.series[.patch])*\ .
 Release candidate branches are created as part of the testing process leading up to releases.
-These are named ``rc-``\ *(year.n)*\ .
+These are named ``rc-``\ *(year.series)*\ .
 Releases are then created on these branches.
 
 Detailed release notes for Firefly are maintained at `https://github.com/Caltech-IPAC/firefly/blob/dev/docs/release-notes.md`__.
@@ -293,13 +293,87 @@ Images from this repository are used to run the ``lsst-demo`` "vanilla Firefly" 
 The "suit" Portal Application
 -----------------------------
 
+The Portal Aspect application is built from the ``lsst/suit`` GitHub repository.
+Almost all of the build infrastructure is inherited from the ``Caltech-IPAC/firefly`` repository, however, and that repository must be present in source form in order to perform an ``lsst/suit`` build.
+(That is, an ``lsst/suit`` build cannot be performed against the *output* of a Firefly build.)
+
+In order to support a simple release-dependency management workflow for ``lsst/suit`` builds, following DMTN-106 (DM Release Process), the Firefly repository tag (release) to be used in association with a specific tag of the ``lsst/suit`` repository is part of the ``lsst/suit`` content.
+As noted above, the file :file:`suit/config/firefly_build.tag` contains this tag.
+During a build of ``lsst/suit``, the specified Firefly tag is checked out.
+
+Release Conventions
+^^^^^^^^^^^^^^^^^^^
+
+For ``lsst/suit`` itself, the release tagging convention set forth in DMTN-106 is used.
+Release tags follow a SemVer 2.0 approach, and are of the form ``(major).(minor).(patch)``.
+As no other code depends at build time on ``lsst/suit``, the SemVer logic is intended to cover primarily issues of compatibility with other services and with :py:mod:`firefly_client`, and changes to the appearance and function of the user interface.
+Incrementing only the ``patch`` number indicates that no changes in compatibility are expected.
+
+Note that a new release of ``lsst/suit`` is required in order to pick up a new release of Firefly, via the tag-file mechanism described above.
+Changing to a new Firefly release series (i.e., changing either the ``year`` or the ``series`` number in the Firefly release tag) should always trigger at least a change to the ``minor`` number in the ``lsst/suit`` release tag.
+Changing to a new Firefly patch release (``patch`` component) will normally be represented by an increment to the ``patch`` component of the ``lsst/suit`` tag.
+
+As a concrete example, ``suit 1.1.1`` depends on ``firefly release-2019.3.2``.
+
+Releases of ``lsst/suit`` are built on branches of the repository labeled ``rc-``\ *major.minor*\ .
+Patches are developed on the branch, and release tags, including patch releases, are applied to this branch.
+
+The tip of a release branch of ``lsst/suit`` should **not** be merged blindly to ``master``, as ``master`` is normally configured to depend on the tip of ``Caltech-IPAC/firefly:dev`` rather than a release.
+Everything from a release *other than* the file :file:`suit/config/firefly_build.tag` can generally be merged if it is otherwise compatible with ``master``, though.
+
+Build Procedure
+^^^^^^^^^^^^^^^
+
+Builds of ``lsst/suit`` are currently performed using the same IPAC-based Jenkins system that is used for Firefly itself.
+As previously discussed, the aim is to transfer this responsibility to the Rubin/LSST side during 2020, but this depends on the availability of SQuaRE time to help with the work.
+
+The Jenkins procedure requires VPN access to IPAC and an IPAC LDAP account.
+It is documented here to assist the team itself in its work.
+An internal host at IPAC is involved; the identity of this host is suppressed here.
+
+The Jenkins control page for ``lsst/suit`` builds is available at ``https://(host:port)/job/k8s_suit/``.
+Once connected, the :guilabel:`log in` button in the upper right should be used to log in with an IPAC LDAP identity.
+After logging in, a control for :guilabel:`Build with Parameters` should be visible in the upper left.
+This will bring up a panel in which the tag of ``lsst/suit`` to be used can be specified.
+An optional label for the build can be included.
+Release candidate builds should have :guilabel:`BUILD_ENV` set to ``dev``; final release builds should use ``ops``.
+For ``lsst/suit`` builds, :guilabel:`DEPLOY_K8S` can be unchecked; there is generally little point to doing an IPAC-hosted Kubernetes deployment of such a build.
+Select :guilablel:`Build` and the build will be initiated.
+
+Typically the build will complete within about 7 minutes and a container image tagged with the release tag will appear in Dockerhub under the ``ipac/suit`` repository.
 
 
 Deployment Procedures
 =====================
 
-Debugging Deployments
----------------------
+..
+  The Portal Aspect Application
+  -----------------------------
+
+The deployment procedure for new releases of ``lsst/suit`` (i.e., new tags of the container image at ``ipac/suit``) is controlled by SQuaRE and is somewhat of a moving target in 2020.
+A summary will be added to this document in a later revision.
+
+Deployments should under normal circumstances be scheduled in the LSP Operations meeting at 11:00 Project Time on Thursdays.
+The details should be worked out on the ``#dm-lsp-team`` Slack channel and user notifications issued as decided in those fora.
+
+Generally speaking, the process for deploying a new release begins with testing the underlying Firefly build as an update on the ``lsst-demo`` server.
+Testing should include exercising TAP queries (against non-LSST services; ``lsst-demo`` cannot access the secure Rubin/LSST TAP servers) as well as (at least) loading a FITS image from IRSA.
+If ``lsst-demo`` is, at the time of deployment, configured as the image visualization server for the Notebook Aspect (Nublado) of any Science Platform instances, the standard ``Firefly.ipynb`` notebook from the ``notebook-demo`` repository should be tested in that Nublado instance.
+
+Once the Firefly release is seen to behave normally, following arrangements with the LSP Operations team, a new version of the Portal application image from ``ipac/suit`` can be deployed to `https://lsst-lsp-int.ncsa.illinois.edu/portal/app`__ using the current SQuaRE process for configuration management.
+Generally this involves making a PR against a configuration repository, after arranging with SQuaRE personnel for the prompt merging of the PR and re-initialization of the appropriate Kubernetes pod(s).
+
+Testing should at a minimum include making queries against the Rubin/LSST TAP server(s), loading an LSST image (once they are available through ObsTAP), and verifying the operation of the ``Firefly.ipynb`` test notebook.
+It is recommended that the SQuaRE team be asked to verify the latter as well.
+
+Following testing and consultation with LSP Operations, an opportunity for deployment to `https://lsst-lsp-int.ncsa.illinois.edu/portal/app`__ can be scheduled.
+This will follow the same process as the test deployment to ``lsst-lsp-int``.
+
+
+.. 
+  Debugging Deployments
+  ---------------------
+
 
 
 
@@ -313,6 +387,8 @@ When actively working on testing or deploying updates to the Portal Aspect and/o
 Jira tickets requesting support may be created in the Rubin/LSST Jira system, under the ``DM-`` project.
 Portal-related tickets should be associated with the ``SUIT`` Jira component and assigned to the "Science User Interface" team.
 Tickets for which Rubin/LSST wishes to assert an explicit claim on the limited maintenance support time currently funded by the project should have the label ``SUIT-maintenance`` attached.
+
+Associated tickets in the ``FIREFLY-`` project in IPAC Jira (which can be linked directly to ``DM-`` tickets, cross-server) should have the ``LSST-maintenance`` label attached.
 
 Other tickets will be taken into consideration as well as part of the normal Firefly development cycle; they have a higher probability of being addressed if they are aligned with the interests of other projects at IPAC.
 In this context it is worth noting that the TAP UI, central to the Portal, is not yet actively used in IPAC projects, but is intended to become a widely-used component over the next year or two.

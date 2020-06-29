@@ -160,11 +160,11 @@ The actual server process is constructed using Apache Tomcat, and both the Tomca
 Actual deployment in Kubernetes is controlled by a "Helm chart" created by the SQuaRE team with guidance from IPAC.
 Each LSP instance can be configured to run a different named release of the Portal image.
 
-The deployment is expected to follow the LSP convention that the Portal Web application is available at the URL *(LSP-instance-root-URL)*``/portal/app`` (the base ``/portal`` endpoint itself is reserved for an originally envisioned "start page" for the Portal, but this was not implemented post-DM-10).
-The Portal code expects that, following the LSP convention, the Notebook Aspect will be deployed at *(LSP-instance-root-URL)*``/nb``, and the API Aspect at *(LSP-instance-root-URL)*``/api``, with the TAP service specifically at *(LSP-instance-root-URL)*``/api/tap``.
-The URL conventions involved are defined in Document XXX.
+The deployment is expected to follow the LSP convention that the Portal Web application is available at the URL *(LSP-instance-root-URL)*\ ``/portal/app`` (the base ``/portal`` endpoint itself is reserved for an originally envisioned "start page" for the Portal, but this was not implemented post-DM-10).
+The Portal code expects that, following the LSP convention, the Notebook Aspect will be deployed at *(LSP-instance-root-URL)*\ ``/nb``, and the API Aspect at *(LSP-instance-root-URL)*\ ``/api``, with the TAP service specifically at *(LSP-instance-root-URL)*\ ``/api/tap``.
+The URL conventions involved are defined in DMTN-076, Internet Endpoints for the Science Platform.
 
-As of early 2020, standing instances are maintained at NCSA at `https://lsst-lsp-stable.ncsa.illinois.edu/portal/app` and `https://lsst-lsp-int.ncsa.illinois.edu/portal/app`, with the latter used preferentially for testing of new releases.
+As of early 2020, standing instances are maintained at NCSA at `https://lsst-lsp-stable.ncsa.illinois.edu/portal/app`__ and `https://lsst-lsp-int.ncsa.illinois.edu/portal/app`__, with the latter used preferentially for testing of new releases.
 
 Authentication and Authorization Considerations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -186,7 +186,7 @@ This is not likely to be a situation that arises in practice.
 Standalone Firefly Server
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In addition to the Portal Aspect application deployed in the LSP instances in Kubernetes, at this time LSST also maintains a standalone Firefly server, for image visualization purposes, on an NCSA virtual machine at `http://lsst-demo.ncsa.illinois.edu/firefly/`.
+In addition to the Portal Aspect application deployed in the LSP instances in Kubernetes, at this time LSST also maintains a standalone Firefly server, for image visualization purposes, on an NCSA virtual machine at `http://lsst-demo.ncsa.illinois.edu/firefly/`__.
 This deployment is "vanilla Firefly" - that is, it does not use code from the ``lsst/suit`` repository and does not have access to the LSST-specific TAP services - and is based on an image from the ``ipac/firefly`` DockerHub repository.
 However, it is fully functional for use with :py:mod:`lsst.afw.display` image visualization, and has been used in place of the Portal Aspect server(s) inside the LSP instances in order to improve performance, in particular, working around some issues with the Kubernetes networking stack.
 
@@ -251,6 +251,49 @@ The run-time environment in the Docker images is based on (OS version), (JRE ver
 Build and Release Process Details
 =================================
 
+Firefly
+-------
+
+Firefly builds, based on Gradle, are performed in a Jenkins-driven automated build system located at IPAC.
+Triggered by an option on the Jenkins build, branch builds may be deployed to the IRSA Kubernetes cluster for testing.
+The Firefly group follows a ticket-branch development pattern similar to that used by LSST DM.
+Ticket branches are associated with Jira tickets in the IPAC Jira system, generally in the ``FIREFLY-`` project.
+This Jira system is not currently visible to non-IPAC staff.
+Rubin/LSST-specific developments can, however, be linked to ``DM-`` tickets.
+Successfully reviewed branches are merged to the ``dev`` branch of ``Caltech-IPAC/firefly``, rather than to ``master``, which is only infrequently updated.
+
+Nightly builds are performed from the head of the ``dev`` branch and deployed to the IRSA Kubernetes cluster.
+
+A new release series is initiated 2-3 times per year, driven by the needs of the projects that currently share Firefly as an implementation tool: IRSA, NED, the Exoplanet Archive, and Rubin/LSST.
+Each release series may contain point releases after the initial one, to capture minor bug fixes.
+Generally the attitude of the Firefly group is to prefer deferring non-urgent changes to the next release series in preference to performing a point release.
+However, that policy can be overriden by individual projects' needs, particularly if production systems' behavior are at stake.
+
+The low level of support provided by Rubin/LSST for Firefly post-DM-10 does allows for release of urgent fixes when required; these must be explicitly requested by Rubin/LSST.
+
+Releases follow the naming convention *(four-digit-year.number)*, with point releases of the form *(year.n.m)*\ .
+Release tags on Github have the form ``release-``\ *(year.n[.m])*\ .
+Release candidate branches are created as part of the testing process leading up to releases.
+These are named ``rc-``\ *(year.n)*\ .
+Releases are then created on these branches.
+
+Detailed release notes for Firefly are maintained at `https://github.com/Caltech-IPAC/firefly/blob/dev/docs/release-notes.md`__.
+
+Non-IPAC Rubin/LSST staff are generally not directly involved in the development or release build process.
+However, Firefly is open-source, and pull requests are accepted, so for minor changes (particularly to easily-corrected things like button labels or other text strings) it can be an option to submit a PR and then communicate with the IPAC team about incorporating it into a release.
+Note again in this context that the leading edge of Firefly development is on the ``dev``, not ``master``, branch.
+
+The key build artifact for core Firefly is a Docker container image.
+Container images for the nightly, selected feature branch builds, release candidates, and releases are maintained on DockerHub in the ``ipac/firefly`` repository; see `https://hub.docker.com/r/ipac/firefly/tags`__.
+Many of these images are for specific non-Rubin/LSST purposes, of course.
+
+Images from this repository are used to run the ``lsst-demo`` "vanilla Firefly" server, as noted above.
+
+
+The "suit" Portal Application
+-----------------------------
+
+
 
 Deployment Procedures
 =====================
@@ -258,6 +301,22 @@ Deployment Procedures
 Debugging Deployments
 ---------------------
 
+
+
+Support Considerations
+======================
+
+The first point of contact for support for the Portal Aspect and Firefly in Rubin/LSST is the Slack channel ``#dm-suit-firefly-dev``.
+IPAC staff cannot be assumed to be monitoring any other channels regularly for support requests, given the limited time available for Rubin-specific work.
+When actively working on testing or deploying updates to the Portal Aspect and/or ``lsst-demo``, the IPAC staff concerned will follow the ``#dm-lsp-team`` and ``#dm-lsp`` channels as well.
+
+Jira tickets requesting support may be created in the Rubin/LSST Jira system, under the ``DM-`` project.
+Portal-related tickets should be associated with the ``SUIT`` Jira component and assigned to the "Science User Interface" team.
+Tickets for which Rubin/LSST wishes to assert an explicit claim on the limited maintenance support time currently funded by the project should have the label ``SUIT-maintenance`` attached.
+
+Other tickets will be taken into consideration as well as part of the normal Firefly development cycle; they have a higher probability of being addressed if they are aligned with the interests of other projects at IPAC.
+In this context it is worth noting that the TAP UI, central to the Portal, is not yet actively used in IPAC projects, but is intended to become a widely-used component over the next year or two.
+The priority of work on the TAP UI will likely increase as a result.
 
 ..
   Technote content.

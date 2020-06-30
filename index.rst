@@ -350,8 +350,8 @@ Deployment Procedures
   The Portal Aspect Application
   -----------------------------
 
-The deployment procedure for new releases of ``lsst/suit`` (i.e., new tags of the container image at ``ipac/suit``) is controlled by SQuaRE and is somewhat of a moving target in 2020.
-A summary will be added to this document in a later revision.
+The deployment procedure for new releases of ``lsst/suit`` (i.e., new tags of the container image at ``ipac/suit``) is controlled by SQuaRE and has been evolving during 2020.
+A more detailed technical description will be added to this document in a later revision, backed by a (forthcoming) document from the SQuaRE group.
 
 Deployments should under normal circumstances be scheduled in the LSP Operations meeting at 11:00 Project Time on Thursdays.
 The details should be worked out on the ``#dm-lsp-team`` Slack channel and user notifications issued as decided in those fora.
@@ -363,11 +363,15 @@ If ``lsst-demo`` is, at the time of deployment, configured as the image visualiz
 Once the Firefly release is seen to behave normally, following arrangements with the LSP Operations team, a new version of the Portal application image from ``ipac/suit`` can be deployed to `https://lsst-lsp-int.ncsa.illinois.edu/portal/app`__ using the current SQuaRE process for configuration management.
 Generally this involves making a PR against a configuration repository, after arranging with SQuaRE personnel for the prompt merging of the PR and re-initialization of the appropriate Kubernetes pod(s).
 
+The relevant configuration files, expressed in the "Helm chart" system, are at `https://github.com/lsst-sqre/charts/tree/master/firefly`__, for the general application configuration, and at `https://github.com/lsst-sqre/lsp-deploy/tree/master/services/portal`__ for the actual operational deployments.
+In particular, for a simple version update, what is required is to change the value of the ``firefly:image:tag:`` parameter in the file ``values-int.yaml`` (which controls the ``lsst-lsp-int`` deployment) to the new DockerHub tag of the ``ipac/suit`` application image.
+
 Testing should at a minimum include making queries against the Rubin/LSST TAP server(s), loading an LSST image (once they are available through ObsTAP), and verifying the operation of the ``Firefly.ipynb`` test notebook.
 It is recommended that the SQuaRE team be asked to verify the latter as well.
 
 Following testing and consultation with LSP Operations, an opportunity for deployment to `https://lsst-lsp-int.ncsa.illinois.edu/portal/app`__ can be scheduled.
 This will follow the same process as the test deployment to ``lsst-lsp-int``.
+In this case the file `https://github.com/lsst-sqre/lsp-deploy/tree/master/services/portal/values-stable.html`__ must be edited, and a pull request filed.
 
 
 .. 

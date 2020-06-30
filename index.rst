@@ -186,7 +186,7 @@ This is not likely to be a situation that arises in practice.
 Standalone Firefly Server
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In addition to the Portal Aspect application deployed in the LSP instances in Kubernetes, at this time LSST also maintains a standalone Firefly server, for image visualization purposes, on an NCSA virtual machine at `http://lsst-demo.ncsa.illinois.edu/firefly/`__.
+In addition to the Portal Aspect application deployed in the LSP instances in Kubernetes, at this time LSST also maintains a standalone Firefly server, for image visualization purposes, on an NCSA virtual machine at `https://lsst-demo.ncsa.illinois.edu/firefly/`__.
 This deployment is "vanilla Firefly" - that is, it does not use code from the ``lsst/suit`` repository and does not have access to the LSST-specific TAP services - and is based on an image from the ``ipac/firefly`` DockerHub repository.
 However, it is fully functional for use with :py:mod:`lsst.afw.display` image visualization, and has been used in place of the Portal Aspect server(s) inside the LSP instances in order to improve performance, in particular, working around some issues with the Kubernetes networking stack.
 

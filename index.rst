@@ -164,7 +164,7 @@ The deployment is expected to follow the LSP convention that the Portal Web appl
 The Portal code expects that, following the LSP convention, the Notebook Aspect will be deployed at *(LSP-instance-root-URL)*\ ``/nb``, and the API Aspect at *(LSP-instance-root-URL)*\ ``/api``, with the TAP service specifically at *(LSP-instance-root-URL)*\ ``/api/tap``.
 The URL conventions involved are defined in DMTN-076, Internet Endpoints for the Science Platform.
 
-As of early 2020, standing instances are maintained at NCSA at `https://lsst-lsp-stable.ncsa.illinois.edu/portal/app`__ and `https://lsst-lsp-int.ncsa.illinois.edu/portal/app`__, with the latter used preferentially for testing of new releases.
+As of early 2020, standing instances are maintained at NCSA at https://lsst-lsp-stable.ncsa.illinois.edu/portal/app and https://lsst-lsp-int.ncsa.illinois.edu/portal/app , with the latter used preferentially for testing of new releases.
 
 Authentication and Authorization Considerations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -186,7 +186,7 @@ This is not likely to be a situation that arises in practice.
 Standalone Firefly Server
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In addition to the Portal Aspect application deployed in the LSP instances in Kubernetes, at this time LSST also maintains a standalone Firefly server, for image visualization purposes, on an NCSA virtual machine at `https://lsst-demo.ncsa.illinois.edu/firefly/`__.
+In addition to the Portal Aspect application deployed in the LSP instances in Kubernetes, at this time LSST also maintains a standalone Firefly server, for image visualization purposes, on an NCSA virtual machine at https://lsst-demo.ncsa.illinois.edu/firefly/ .
 This deployment is "vanilla Firefly" - that is, it does not use code from the ``lsst/suit`` repository and does not have access to the LSST-specific TAP services - and is based on an image from the ``ipac/firefly`` DockerHub repository.
 However, it is fully functional for use with :py:mod:`lsst.afw.display` image visualization, and has been used in place of the Portal Aspect server(s) inside the LSP instances in order to improve performance, in particular, working around some issues with the Kubernetes networking stack.
 
@@ -204,7 +204,7 @@ Implementation
 Firefly Core
 ------------
 
-The Portal is based on the Caltech/IPAC-written open-source "Firefly" client-server application (see `https://github.com/Caltech-IPAC/firefly`).
+The Portal is based on the Caltech/IPAC-written open-source "Firefly" client-server application (see https://github.com/Caltech-IPAC/firefly).
 
 Firefly provides components for FITS and HiPS image visualization, tabular data query, and tabular data display, as well as a scientific visualization environment for tabular data, based on the Plotly.js library, with extensive brushing, filtering, and linking capabilities, and supporting the overlay of tabular data in sky coordinates on images.
 
@@ -277,14 +277,14 @@ Release candidate branches are created as part of the testing process leading up
 These are named ``rc-``\ *(year.series)*\ .
 Releases are then created on these branches.
 
-Detailed release notes for Firefly are maintained at `https://github.com/Caltech-IPAC/firefly/blob/dev/docs/release-notes.md`__.
+Detailed release notes for Firefly are maintained at https://github.com/Caltech-IPAC/firefly/blob/dev/docs/release-notes.md .
 
 Non-IPAC Rubin/LSST staff are generally not directly involved in the development or release build process.
 However, Firefly is open-source, and pull requests are accepted, so for minor changes (particularly to easily-corrected things like button labels or other text strings) it can be an option to submit a PR and then communicate with the IPAC team about incorporating it into a release.
 Note again in this context that the leading edge of Firefly development is on the ``dev``, not ``master``, branch.
 
 The key build artifact for core Firefly is a Docker container image.
-Container images for the nightly, selected feature branch builds, release candidates, and releases are maintained on DockerHub in the ``ipac/firefly`` repository; see `https://hub.docker.com/r/ipac/firefly/tags`__.
+Container images for the nightly, selected feature branch builds, release candidates, and releases are maintained on DockerHub in the ``ipac/firefly`` repository; see https://hub.docker.com/r/ipac/firefly/tags .
 Many of these images are for specific non-Rubin/LSST purposes, of course.
 
 Images from this repository are used to run the ``lsst-demo`` "vanilla Firefly" server, as noted above.
@@ -360,18 +360,18 @@ Generally speaking, the process for deploying a new release begins with testing 
 Testing should include exercising TAP queries (against non-LSST services; ``lsst-demo`` cannot access the secure Rubin/LSST TAP servers) as well as (at least) loading a FITS image from IRSA.
 If ``lsst-demo`` is, at the time of deployment, configured as the image visualization server for the Notebook Aspect (Nublado) of any Science Platform instances, the standard ``Firefly.ipynb`` notebook from the ``notebook-demo`` repository should be tested in that Nublado instance.
 
-Once the Firefly release is seen to behave normally, following arrangements with the LSP Operations team, a new version of the Portal application image from ``ipac/suit`` can be deployed to `https://lsst-lsp-int.ncsa.illinois.edu/portal/app`__ using the current SQuaRE process for configuration management.
+Once the Firefly release is seen to behave normally, following arrangements with the LSP Operations team, a new version of the Portal application image from ``ipac/suit`` can be deployed to https://lsst-lsp-int.ncsa.illinois.edu/portal/app using the current SQuaRE process for configuration management.
 Generally this involves making a PR against a configuration repository, after arranging with SQuaRE personnel for the prompt merging of the PR and re-initialization of the appropriate Kubernetes pod(s).
 
-The relevant configuration files, expressed in the "Helm chart" system, are at `https://github.com/lsst-sqre/charts/tree/master/firefly`__, for the general application configuration, and at `https://github.com/lsst-sqre/lsp-deploy/tree/master/services/portal`__ for the actual operational deployments.
+The relevant configuration files, expressed in the "Helm chart" system, are at https://github.com/lsst-sqre/charts/tree/master/firefly , for the general application configuration, and at https://github.com/lsst-sqre/lsp-deploy/tree/master/services/portal for the actual operational deployments.
 In particular, for a simple version update, what is required is to change the value of the ``firefly:image:tag:`` parameter in the file ``values-int.yaml`` (which controls the ``lsst-lsp-int`` deployment) to the new DockerHub tag of the ``ipac/suit`` application image.
 
 Testing should at a minimum include making queries against the Rubin/LSST TAP server(s), loading an LSST image (once they are available through ObsTAP), and verifying the operation of the ``Firefly.ipynb`` test notebook.
 It is recommended that the SQuaRE team be asked to verify the latter as well.
 
-Following testing and consultation with LSP Operations, an opportunity for deployment to `https://lsst-lsp-int.ncsa.illinois.edu/portal/app`__ can be scheduled.
+Following testing and consultation with LSP Operations, an opportunity for deployment to https://lsst-lsp-int.ncsa.illinois.edu/portal/app can be scheduled.
 This will follow the same process as the test deployment to ``lsst-lsp-int``.
-In this case the file `https://github.com/lsst-sqre/lsp-deploy/tree/master/services/portal/values-stable.html`__ must be edited, and a pull request filed.
+In this case the file https://github.com/lsst-sqre/lsp-deploy/tree/master/services/portal/values-stable.html must be edited, and a pull request filed.
 
 
 .. 

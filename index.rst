@@ -338,7 +338,7 @@ This will bring up a panel in which the tag of ``lsst/suit`` to be used can be s
 An optional label for the build can be included.
 Release candidate builds should have :guilabel:`BUILD_ENV` set to ``dev``; final release builds should use ``ops``.
 For ``lsst/suit`` builds, :guilabel:`DEPLOY_K8S` can be unchecked; there is generally little point to doing an IPAC-hosted Kubernetes deployment of such a build.
-Select :guilablel:`Build` and the build will be initiated.
+Select :guilabel:`Build` and the build will be initiated.
 
 Typically the build will complete within about 7 minutes and a container image tagged with the release tag will appear in Dockerhub under the ``ipac/suit`` repository.
 

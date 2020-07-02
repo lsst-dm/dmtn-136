@@ -127,7 +127,7 @@ A limited list of commonly useful services is pre-configured into the applicatio
 No IVOA registry-query capability for service discovery is currently exposed, nor are the prototype LSST data services registered in any IVOA registry at this time.
 It is not yet determined whether LSST will run its own Registry service.
 
-Custonization
+Customization
 ^^^^^^^^^^^^^
 
 The post-DM-10 Portal is entirely metadata-driven and contains little knowledge of LSST-specific details other than the URL conventions above, and the need to forward credentials to the service.

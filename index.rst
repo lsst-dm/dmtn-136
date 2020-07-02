@@ -442,17 +442,6 @@ The priority of work on the TAP UI will likely increase as a result.
 
 .. sectnum::
 
-.. TODO: Delete the note below before merging new content to the master branch.
-
-.. note::
-
-   **This technote is not yet published.**
-
-   This note will provide concise information about the operational concept for the LSP Portal Aspect, including the core Firefly software around which it is structured, as well as information about the deployment and maintenance of the Portal Aspect software.
-
-.. Add content here.
-.. Do not include the document title (it's automatically added from metadata.yaml).
-
 .. .. rubric:: References
 
 .. Make in-text citations with: :cite:`bibkey`.

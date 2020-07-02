@@ -245,7 +245,7 @@ The build process is based on Gradle.
 For compatibility with other IPAC applications, as of early 2020 the production release builds are still performed with JDK 8, though the code is also compatible with JDK 11.
 Production builds will move to JDK 11 over time; the schedule for this work at IPAC is not yet determined as of the time of writing.
 
-The run-time environment in the Docker images is based on (OS version), (JRE version), and (Tomcat version) as of December 2019.
+The run-time environment in the Docker images is based on CentOS 7 (3.10.0-1127.13.1.el7), JDK 11.0.7, and Tomcat 9.0.36 as of June 2020.
 
 
 Build and Release Process Details

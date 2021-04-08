@@ -330,18 +330,31 @@ As previously discussed, the aim is to transfer this responsibility to the Rubin
 The Jenkins procedure requires VPN access to IPAC and an IPAC LDAP account.
 It is documented here to assist the team itself in its work.
 An internal host at IPAC is involved; the identity of this host is suppressed here.
+(For IPAC staff: the link is pinned in the ``#lsst-internal`` Slack channel.)
 
-The Jenkins control page for ``lsst/suit`` builds is available at ``https://(host:port)/job/k8s_suit/``.
+The Jenkins control page for ``lsst/suit`` builds is available at ``https://(host:port)/view/IRSA%20k8s/job/ikc_suit/``.
 Once connected, the :guilabel:`log in` button in the upper right should be used to log in with an IPAC LDAP identity.
 After logging in, a control for :guilabel:`Build with Parameters` should be visible in the upper left.
-This will bring up a panel in which the tag of ``lsst/suit`` to be used can be specified.
-An optional label for the build can be included.
-Release candidate builds should have :guilabel:`BUILD_ENV` set to ``dev``; final release builds should use ``ops``.
-For ``lsst/suit`` builds, :guilabel:`DEPLOY_K8S` can be unchecked; there is generally little point to doing an IPAC-hosted Kubernetes deployment of such a build.
+This will bring up a panel in which the tag of ``lsst/suit`` to be used can be specified, and other parameters of the build controlled.
+
+- The :guilabel:`SUIT_BRANCH` field should be used for the branch name or release tag of ``lsst/suit`` to be built.
+- Release candidate builds should have :guilabel:`BUILD_ENV` set to ``dev``; final release builds should use ``ops``.
+  The principal effect of this is to change the self-identification of the release in the Firefly version display dialog.
+- The :guilabel:`ACTION` field should normally be set to ``both`` so that it's possible to do a quick test of the build on an IPAC-hosted Kubernetes pod.
+- The default value for :guilabel:`MEMORY_LIMIT` is generally adequate.
+- **NB** For the SemVer numeric-tag convention used by ``lsst/suit`` you **must override** the the :guilabel:`HOSTNAME` field.
+  A better default is being developed.  For now, for tag ``2.1.1``, for example, use ``suit-211`` for the hostname.
+- Leave :guilabel:`DOCKER_TAGS` blank and accept the default, which is the same as the value given for :guilabel:`SUIT_BRANCH`.
+
 Select :guilabel:`Build` and the build will be initiated.
 
 Typically the build will complete within about 7 minutes and a container image tagged with the release tag will appear in Dockerhub under the ``ipac/suit`` repository.
+If ``ACTION=both`` was selected, an instance of the Portal application will be started immediately on an IPAC Kubernetes host.
+The URL endpoint for the deployment will be displayed in a build-completed message automatically sent to the IPAC Slack ``#irsa-build`` channel.
 
+It is useful to do a basic functionality check at this point.
+Note that the RSP TAP service and other authenticated services **will not be available**.
+Substantive testing must be done on one of the RSP integration instances.
 
 Deployment Procedures
 =====================
@@ -359,6 +372,10 @@ The details should be worked out on the ``#dm-lsp-team`` Slack channel and user 
 Generally speaking, the process for deploying a new release begins with testing the underlying Firefly build as an update on the ``lsst-demo`` server.
 Testing should include exercising TAP queries (against non-LSST services; ``lsst-demo`` cannot access the secure Rubin/LSST TAP servers) as well as (at least) loading a FITS image from IRSA.
 If ``lsst-demo`` is, at the time of deployment, configured as the image visualization server for the Notebook Aspect (Nublado) of any Science Platform instances, the standard ``Firefly.ipynb`` notebook from the ``notebook-demo`` repository should be tested in that Nublado instance.
+
+.. warning::
+
+   The following discussion of configuration is known to be outdated and needs to be updated with information on the still-evolving ArgoCD/Phalanx deployment configuration system.
 
 Once the Firefly release is seen to behave normally, following arrangements with the LSP Operations team, a new version of the Portal application image from ``ipac/suit`` can be deployed to https://lsst-lsp-int.ncsa.illinois.edu/portal/app using the current SQuaRE process for configuration management.
 Generally this involves making a PR against a configuration repository, after arranging with SQuaRE personnel for the prompt merging of the PR and re-initialization of the appropriate Kubernetes pod(s).

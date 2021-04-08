@@ -321,6 +321,9 @@ Patches are developed on the branch, and release tags, including patch releases,
 The tip of a release branch of ``lsst/suit`` should **not** be merged blindly to ``master``, as ``master`` is normally configured to depend on the tip of ``Caltech-IPAC/firefly:dev`` rather than a release.
 Everything from a release *other than* the file :file:`suit/config/firefly_build.tag` can generally be merged if it is otherwise compatible with ``master``, though.
 
+The self-identification of builds in the Firefly version number dialog is driven by the version number config parameters at the top of the :file:`suit/config/app.config` file.
+**Do not forget to update this file when creating a release.**
+
 Build Procedure
 ^^^^^^^^^^^^^^^
 

@@ -1,7 +1,8 @@
 .. image:: https://img.shields.io/badge/dmtn--136-lsst.io-brightgreen.svg
    :target: https://dmtn-136.lsst.io
-.. image:: https://travis-ci.com/lsst-dm/dmtn-136.svg
-   :target: https://travis-ci.com/lsst-dm/dmtn-136
+.. image:: https://github.com/lsst/dmtn-136/workflows/CI/badge.svg
+   :target: https://github.com/lsst/dmtn-136/actions/
+
 ..
   Uncomment this section and modify the DOI strings to include a Zenodo DOI badge in the README
   .. image:: https://zenodo.org/badge/doi/10.5281/zenodo.#####.svg
@@ -21,7 +22,7 @@ This note will provide concise information about the operational concept for the
 - Publication URL: https://dmtn-136.lsst.io
 - Alternative editions: https://dmtn-136.lsst.io/v
 - GitHub repository: https://github.com/lsst-dm/dmtn-136
-- Build system: https://travis-ci.com/lsst-dm/dmtn-136
+- Build system: https://github.com/lsst/dmtn-136/actions/
 
 
 Build this technical note

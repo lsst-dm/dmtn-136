@@ -345,8 +345,9 @@ This will bring up a panel in which the tag of ``lsst/suit`` to be used can be s
   The principal effect of this is to change the self-identification of the release in the Firefly version display dialog.
 - The :guilabel:`ACTION` field should normally be set to ``both`` so that it's possible to do a quick test of the build on an IPAC-hosted Kubernetes pod.
 - The default value for :guilabel:`MEMORY_LIMIT` is generally adequate.
-- **NB** For the SemVer numeric-tag convention used by ``lsst/suit`` you **must override** the the :guilabel:`HOSTNAME` field.
-  A better default is being developed.  For now, for tag ``2.1.1``, for example, use ``suit-211`` for the hostname.
+- **NB** For the SemVer numeric-tag convention used by ``lsst/suit`` you **must override** the the :guilabel:`HOSTNAME` field,
+  as the hostname cannot begin with a digit.  An improved procedure for computing the default hostname in the Jenkins
+  control panel is being developed.  For now, for tag ``2.1.1``, for example, use ``suit-211`` for the hostname.
 - Leave :guilabel:`DOCKER_TAGS` blank and accept the default, which is the same as the value given for :guilabel:`SUIT_BRANCH`.
 
 Select :guilabel:`Build` and the build will be initiated.

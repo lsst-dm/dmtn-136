@@ -34,7 +34,7 @@ authors:
 # doi: 10.5281/zenodo.#####
 
 # Copyright statement
-copyright: "2019, California Institute of Technology"
+copyright: "2019-2021, California Institute of Technology"
 
 # Description. A short, 1-2 sentence statemement used by document indices.
 description: "This note will provide concise information about the operational concept for the LSP Portal Aspect, including the core Firefly software around which it is structured, as well as information about the deployment and maintenance of the Portal Aspect software."

@@ -347,7 +347,7 @@ This will bring up a panel in which the tag of ``lsst/suit`` to be used can be s
 - The default value for :guilabel:`MEMORY_LIMIT` is generally adequate.
 - The :guilabel:`HOSTNAME` field is used for an immediate deployment of the build on the internal IRSA Kubernetes cluster.
   The default is based on the value in the :guilabel:`SUIT_BRANCH` field.
-  However: **NB:** For the SemVer numeric-tag convention used by ``lsst/suit`` you currently **must override** this default :guilabel:`HOSTNAME`,
+  However -- **NB** -- for the SemVer numeric-tag convention used by ``lsst/suit`` you currently **must override** this default :guilabel:`HOSTNAME`,
   as a hostname cannot begin with a digit.
   If you do not do this, the Kubernetes deployment phase of the build will fail.
   An improved procedure for computing the default hostname in the Jenkins control panel is being developed.

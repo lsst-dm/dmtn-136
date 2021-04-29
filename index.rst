@@ -345,10 +345,14 @@ This will bring up a panel in which the tag of ``lsst/suit`` to be used can be s
   The principal effect of this is to change the self-identification of the release in the Firefly version display dialog.
 - The :guilabel:`ACTION` field should normally be set to ``both`` so that it's possible to do a quick test of the build on an IPAC-hosted Kubernetes pod.
 - The default value for :guilabel:`MEMORY_LIMIT` is generally adequate.
-- **NB** For the SemVer numeric-tag convention used by ``lsst/suit`` you **must override** the the :guilabel:`HOSTNAME` field,
-  as the hostname cannot begin with a digit.  An improved procedure for computing the default hostname in the Jenkins
-  control panel is being developed.  For now, for tag ``2.1.1``, for example, use ``suit-211`` for the hostname.
-- Leave :guilabel:`DOCKER_TAGS` blank and accept the default, which is the same as the value given for :guilabel:`SUIT_BRANCH`.
+- The :guilabel:`HOSTNAME` field is used for an immediate deployment of the build on the internal IRSA Kubernetes cluster.
+  The default is based on the value in the :guilabel:`SUIT_BRANCH` field.
+  However: **NB:** For the SemVer numeric-tag convention used by ``lsst/suit`` you currently **must override** this default :guilabel:`HOSTNAME`,
+  as a hostname cannot begin with a digit.
+  If you do not do this, the Kubernetes deployment phase of the build will fail.
+  An improved procedure for computing the default hostname in the Jenkins control panel is being developed.
+  For now, as a suggestion: for a tag ``2.1.1``, use ``suit-211`` for the hostname.
+- Leave :guilabel:`DOCKER_TAGS` blank and accept the default, which will be the value given for :guilabel:`SUIT_BRANCH`.
 
 Select :guilabel:`Build` and the build will be initiated.
 
@@ -357,7 +361,7 @@ If ``ACTION=both`` was selected, an instance of the Portal application will be s
 The URL endpoint for the deployment will be displayed in a build-completed message automatically sent to the IPAC Slack ``#irsa-build`` channel.
 
 It is useful to do a basic functionality check at this point.
-Note that the RSP TAP service and other authenticated services **will not be available**.
+Note that the RSP TAP service and other authenticated services **will not be available** in the IRSA Kubernetes environment.
 Substantive testing must be done on one of the RSP integration instances.
 
 Deployment Procedures
@@ -395,7 +399,7 @@ This will follow the same process as the test deployment to ``lsst-lsp-int``.
 In this case the file https://github.com/lsst-sqre/lsp-deploy/tree/master/services/portal/values-stable.html must be edited, and a pull request filed.
 
 
-.. 
+..
   Debugging Deployments
   ---------------------
 
